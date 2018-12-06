@@ -12,7 +12,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import FileBase64 from 'react-file-base64';
 import { connect } from 'react-redux'
-import { closeModal } from "../../Actions/helperAction"
+import { closeModal , showModal} from "../../Actions/helperAction"
 import { userGet, addUser, editUser } from "../../Actions/LoginAction"
 import apiService from '../../lib/apiService/apiService';
 
@@ -42,6 +42,7 @@ const textStylesSelect = {
 	lineHeight: '55px',
 	overflow: 'inherit'
 }
+
 class ModalFormUser extends Component {
 
 	constructor(props) {
@@ -50,30 +51,36 @@ class ModalFormUser extends Component {
 			open: true,
 			edit: false,
 			select: 1,
-			user: { ...this.props.user } || null
+			user: { ...this.props.LoginReducer.user } || null,
+			newUserId: null
 		};
 		this.handleClose = this._handleClose.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.handleReset = this.handleReset.bind(this);
-
 	}
 
 	_handleClose() {
-		/*this.setState({ open: false });
-		this.props.showModal(this.state.open)*/
 		this.props.closeModal();
 	}
 
 	handleChange = (e) => {
 		let user = Object.assign({}, this.state.user);
 		user[e.target.name] = e.target.value;
-		if (this.props.user) {
+		if (this.props.LoginReducer.user) {
 			this.setState({ user, edit: true });
 		} else {
 			this.setState({ user, edit: false });
 		}
 
 	}
+	componentDidUpdate(prevProps , prevState){
+		if(prevProps.LoginReducer.user !== this.props.LoginReducer.user){
+			this.setState({user: this.props.LoginReducer.user.data[0]})
+			console.log(this.props.LoginReducer.user , "LOGINREDUCER DESDE EL MODALFORM")
+		} else if (prevProps.LoginReducer.allUsers !== this.props.LoginReducer.allUsers) {
+			this.props.userGet();
+		} 
+	}	
 	handleReset() {
 		this.setState({
 			user: {
@@ -107,38 +114,16 @@ class ModalFormUser extends Component {
 			postalCode: event.target.postalCode.value,
 			phone: event.target.phone.value,
 			rol_id: this.state.select
-		}
+		};
 
-		if (this.state.edit === true) {
-			this.props.editUser(this.state.user.id, userData)
-			this.props.userData(this.props.LoginReducer.user.data.id, true);
-			this.handleClose();
-			/*apiService('PUT', '/user/id?id=' + this.state.user.id, userData)
-				.then((res) => {
-					if (res.data) {
-						res.data.id = res.data.userId
-						this.props.userData(res.data.id, true);
-					}
-				})
-				.catch(function (reason) {
-					console.error(reason);
-				});*/
+		if (this.state.edit === true) {		
+			this.props.editUser(this.state.user.id, userData);
+			this.props.returnUser(this.state.user.id, userData);
+			this.props.closeModal();
 
 		} else {
 			this.props.addUser(userData);
-			this.props.userData(userData);
-			this.handleClose();
-			/*	apiService('POST', '/user', userData)
-					.then((res) => {
-						if (res.data) {
-							res.data.id = res.data.userId
-							this.props.userData(res.data);
-						}
-					})
-					.catch(function (reason) {
-						console.error(reason);
-					});*/
-
+			this.props.closeModal();
 		}
 	}
 
@@ -152,14 +137,12 @@ class ModalFormUser extends Component {
 			<FlatButton label="Cancel" primary={true} onClick={this.handleClose} />,
 			<FlatButton type="submit" label="Submit" primary={true} />
 		];
-
 		return (
-			<Dialog title="Dialog With Custom Width" modal={true} open={this.props.helperReducer.showModal}>
+			<Dialog title="Dialog With Custom Width" modal={true} open={this.props.showModal}>
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
 						this.handleCreate(e);
-
 					}}>
 					<FontIcon className="material-icons" style={iconStyles}>perm_identity<TextField style={textStyles} onChange={this.handleChange} value={this.state.user.name || ''} name="name" hintText="Nombre" /></FontIcon>
 					<FontIcon className="material-icons" style={iconStyles}>perm_identity<TextField style={textStyles} onChange={this.handleChange} value={this.state.user.surname || ''} name="surname" hintText="Apellido" /></FontIcon>
@@ -212,4 +195,4 @@ const mapToStateToProps = state => {
 	}
 }
 
-export default connect(mapToStateToProps, { closeModal, userGet, addUser, editUser })(ModalFormUser);
+export default connect(mapToStateToProps, { closeModal, userGet, addUser, editUser , showModal })(ModalFormUser);

@@ -5,7 +5,8 @@ const initialState = {
     allUsers: [],
     authenticated: false,
     token: "",
-    user: null
+    user: null,
+    newUser: null
 }
 
 const LoginReducer = (state = initialState, action) => {
@@ -25,7 +26,6 @@ const LoginReducer = (state = initialState, action) => {
             }
 
         case USERS:
-
             return {
                 ...state,
                 allUsers: action.data,
@@ -34,27 +34,19 @@ const LoginReducer = (state = initialState, action) => {
             return {
                 ...state,
                 user: action.data
-            }
-        case DELETE_USER:
-            state.allUsers.data.map((element, index) => {
-                if (element.id === action.id) {
-                    return {
-                        ...state,
-                        allUsers: state.allUsers.data.splice(index, 1)
-                    }
-                }
-            })
-        case EDIT_USER:
+            }                  
+
+        case EDIT_USER:   
             return {
                 ...state,
-                user: action.data
+                user: action.data 
             }
-        case ADD_USER: {
+        case ADD_USER: 
             return {
                 ...state,
-                allUsers: state.allUsers.data.push(action.data)
+                newUser: action.data
             }
-        }
+        
         case RESET_STORE:
             return {
                 ...state,
