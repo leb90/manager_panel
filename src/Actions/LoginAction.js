@@ -48,6 +48,7 @@ export const deleteUserForId = id => {
             .then((res) => {
                 if (res) {
                     dispatch(deleteUser(id))
+                    console.log(res , "DESDE EL DELETEUSERFOR ID")
                 } else {
                     return 'error'
                 }
@@ -59,14 +60,15 @@ export const addUser = userData => {
         apiService('POST', '/user', userData)
             .then((res) => {
                 if (res.data) {
-                    res.data.id = res.data.userId
-                    dispatch(userAdd(res))
-                    console.log(res, "DESDE EL ADD USER")
+                    res.data.id = res.data.userId;
+                    dispatch(userAdd(res));
+                    console.log(res, "DESDE EL ADD USER");
                 }
 
             })
             .catch(function (reason) {
                 console.error(reason);
+                console.log(reason);
             });
     }
 }
@@ -74,6 +76,7 @@ export const editUser = (id, user) => {
     return dispatch => {
         apiService('PUT', '/user/id?id=' + id, user)
             .then((res) => {
+                console.log(res , "DESDE EL EDITUSER LOGIN ACTION")
                 if (res.data) {
                     res.data.id = res.data.userId
                     dispatch(userEdit(res))

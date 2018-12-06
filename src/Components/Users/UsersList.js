@@ -12,6 +12,7 @@ import Alert from '../Alert.js'
 import { connect } from 'react-redux'
 import { userGet, getUserForId, deleteUserForId, resetStore } from '../../Actions/LoginAction'
 import { showModal, showAlert, closeAlert } from "../../Actions/helperAction"
+import { DeviceWifiTethering } from 'material-ui/svg-icons';
 
 const styles = {
 
@@ -131,7 +132,7 @@ class UserList extends Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleUsers = this.handleUsers.bind(this);
     this.handleadduser = this.handleadduser.bind(this)
-
+    this.returnUser = this.returnUser.bind(this)
     this.state = {
       data: dataTable,
       page: 1,
@@ -195,7 +196,6 @@ class UserList extends Component {
         page: data.page,
       });
     }
-
   }
 
   componentDidMount() {
@@ -204,11 +204,39 @@ class UserList extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.LoginReducer.allUsers.data !== this.props.LoginReducer.allUsers.data) {
       this.handleUsers();
-      console.log(this.props.LoginReducer.allUsers, "ALLUSERS DESDE UPDATE")
-    } else if (prevProps.LoginReducer.user !== this.props.LoginReducer.user) {
-      this.props.showModal();
-      this.setState({ user: this.props.LoginReducer.user.data[0] })
-    }
+    } 
+  } 
+  
+  returnUser( id , data ){
+    console.log(id ,data , "DESDE EL RETURN USER ");
+    dataTable[0].forEach(element => {
+      element.forEach((e, i )=> {
+        if(e.id === id){
+          data.id = id;
+          data.action = [<IconButton
+            iconClassName="material-icons"
+            tooltipPosition="top-center"
+            tooltip="Edit"
+            key={data.id}
+            onClick={() => { 
+              this.props.getUserForId(data.id);
+              this.props.showModal();
+            }}
+          >
+            mode_edit
+                  </IconButton>, <IconButton
+            iconClassName="material-icons"
+            tooltipPosition="top-center"
+            tooltip="Delete"
+            onClick={() => this.handleAlert(data.id)}
+          >
+            delete
+                  </IconButton>]
+          element[i] = data;
+        }
+      })
+    });
+    
   }
   handleUsers(index) {
     const array = this.props.LoginReducer.allUsers.data;
@@ -219,8 +247,9 @@ class UserList extends Component {
           tooltipPosition="top-center"
           tooltip="Edit"
           key={i.id}
-          onClick={() => {
-            this.props.getUserForId(i.id);
+          onClick={() => { 
+            this.props.getUserForId(i.id);  
+            this.props.showModal();
           }}
         >
           mode_edit
@@ -259,7 +288,7 @@ class UserList extends Component {
         tooltip="Edit"
         key={data.id}
         onClick={() => {
-          this.props.getUserForId(data.id)
+          this.props.getUserForId(data.id) 
         }}
       >
         mode_edit
@@ -272,8 +301,8 @@ class UserList extends Component {
         delete
       </IconButton>]
       let pos = dataTable[0].length - 1
-
       if (dataTable[0][pos].length < 10) {
+      //  data.id = dataTable[0][pos][dataTable[0][pos].length -1].id +1
         dataTable[0][pos].push(data)
         this.setState({
           data: dataTable[0][pos],
@@ -281,6 +310,7 @@ class UserList extends Component {
           totalUser: this.state.totalUser + 1,
         });
       } else {
+        //data.id = dataTable[0][pos][dataTable[0][pos].length -1].id +1
         dataTable[0].push([data])
         this.setState({
           data: dataTable[0][pos + 1],
@@ -302,13 +332,19 @@ class UserList extends Component {
   handleDelete(flag) {
     let id = this.state.deleteId;
     if (flag === true) {
+      console.log(id , dataTable[0] , "DESDE EL HANDLE DELETE")
       this.props.deleteUserForId(id);
-      this.props.closeAlert();
-      this.props.userGet();
-    } else {
-      this.props.closeAlert();
-      this.setState({ deleteId: null })
-    }
+
+      dataTable[0].forEach((element) => {
+        element.forEach((e,i) => {
+          if (e.id == id) {
+            element.splice( i , 1)
+          }
+        })
+      })
+      
+    } 
+    this.props.closeAlert();
   }
 
   handleAlert(id) {
@@ -333,7 +369,8 @@ class UserList extends Component {
     }
   }
   render() {
-    console.log(this.state.user, "DESDE EL RENDER EL USER DEL STATE")
+   
+    console.log(this.props.LoginReducer.allUsers, "DESDE EL RENDER EL USER DEL STATE")
     return (
 
       <div style={styles.container}>
@@ -372,7 +409,7 @@ class UserList extends Component {
           </Card>
         </div>
 
-        {this.props.helperReducer.showModal && <ModalFormUser user={this.state.user} showModal={this.props.helperReducer.showModal} userData={this.addUser} />}
+        {this.props.helperReducer.showModal && <ModalFormUser showModal={this.props.helperReducer.showModal} userData={this.addUser} returnUser={this.returnUser}/>}
         {this.props.helperReducer.showAlert && <Alert showAlert={this.handleDelete} info={'Desea eliminar al usuario?'} />}
       </div>
     ) /*else {
