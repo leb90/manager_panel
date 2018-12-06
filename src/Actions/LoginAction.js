@@ -62,7 +62,7 @@ export const addUser = userData => {
                 if (res.data) {
                     res.data.id = res.data.userId;
                     dispatch(userAdd(res));
-                    console.log(res, "DESDE EL ADD USER");
+                    console.log(res , "DEDEDE EL LOGINCATION ADDUSER")
                 }
 
             })

@@ -5,7 +5,8 @@ const initialState = {
     allUsers: [],
     authenticated: false,
     token: "",
-    user: null
+    user: null,
+    newUser: null
 }
 
 const LoginReducer = (state = initialState, action) => {
@@ -43,7 +44,7 @@ const LoginReducer = (state = initialState, action) => {
         case ADD_USER: 
             return {
                 ...state,
-                allUsers: state.allUsers.data.push(action.data)
+                newUser: action.data
             }
         
         case RESET_STORE:

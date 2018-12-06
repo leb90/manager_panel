@@ -51,7 +51,8 @@ class ModalFormUser extends Component {
 			open: true,
 			edit: false,
 			select: 1,
-			user: { ...this.props.LoginReducer.user } || null
+			user: { ...this.props.LoginReducer.user } || null,
+			newUserId: null
 		};
 		this.handleClose = this._handleClose.bind(this);
 		this.handleChange = this.handleChange.bind(this);
@@ -78,7 +79,7 @@ class ModalFormUser extends Component {
 			console.log(this.props.LoginReducer.user , "LOGINREDUCER DESDE EL MODALFORM")
 		} else if (prevProps.LoginReducer.allUsers !== this.props.LoginReducer.allUsers) {
 			this.props.userGet();
-		}
+		} 
 	}	
 	handleReset() {
 		this.setState({
@@ -122,7 +123,6 @@ class ModalFormUser extends Component {
 
 		} else {
 			this.props.addUser(userData);
-			this.props.userData(userData);
 			this.props.closeModal();
 		}
 	}
@@ -137,7 +137,6 @@ class ModalFormUser extends Component {
 			<FlatButton label="Cancel" primary={true} onClick={this.handleClose} />,
 			<FlatButton type="submit" label="Submit" primary={true} />
 		];
-
 		return (
 			<Dialog title="Dialog With Custom Width" modal={true} open={this.props.showModal}>
 				<form

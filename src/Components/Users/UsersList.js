@@ -138,7 +138,8 @@ class UserList extends Component {
       page: 1,
       totalUser: 0,
       deleteId: null,
-      user: null
+      user: null,
+      newUserId: null
     };
   }
 
@@ -204,7 +205,9 @@ class UserList extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.LoginReducer.allUsers.data !== this.props.LoginReducer.allUsers.data) {
       this.handleUsers();
-    } 
+    }  else if (prevProps.LoginReducer.newUser !== this.props.LoginReducer.newUser){
+      this.addUser(this.props.LoginReducer.newUser.data)
+		}
   } 
   
   returnUser( id , data ){
@@ -301,8 +304,9 @@ class UserList extends Component {
         delete
       </IconButton>]
       let pos = dataTable[0].length - 1
+
       if (dataTable[0][pos].length < 10) {
-      //  data.id = dataTable[0][pos][dataTable[0][pos].length -1].id +1
+
         dataTable[0][pos].push(data)
         this.setState({
           data: dataTable[0][pos],
@@ -310,7 +314,7 @@ class UserList extends Component {
           totalUser: this.state.totalUser + 1,
         });
       } else {
-        //data.id = dataTable[0][pos][dataTable[0][pos].length -1].id +1
+
         dataTable[0].push([data])
         this.setState({
           data: dataTable[0][pos + 1],
