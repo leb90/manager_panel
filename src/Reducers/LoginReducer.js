@@ -1,5 +1,13 @@
-import Auth from '../lib/Auth/Auth';
-import { AUTHENTICATED, USERS, GET_USER, DELETE_USER, RESET_STORE, ADD_USER, EDIT_USER } from '../Constants';
+import Auth from "../lib/Auth/Auth";
+import {
+    AUTHENTICATED,
+    USERS,
+    GET_USER,
+    DELETE_USER,
+    RESET_STORE,
+    ADD_USER,
+    EDIT_USER
+} from "../Constants";
 
 const initialState = {
     allUsers: [],
@@ -7,7 +15,7 @@ const initialState = {
     token: "",
     user: null,
     newUser: null
-}
+};
 
 const LoginReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -22,31 +30,30 @@ const LoginReducer = (state = initialState, action) => {
                 return {
                     ...state,
                     authenticated: false
-                }
+                };
             }
-
         case USERS:
             return {
                 ...state,
-                allUsers: action.data,
+                allUsers: action.data
             };
         case GET_USER:
             return {
                 ...state,
                 user: action.data
-            }                  
+            };
 
-        case EDIT_USER:   
+        case EDIT_USER:
             return {
                 ...state,
-                user: action.data 
-            }
-        case ADD_USER: 
+                user: action.data
+            };
+        case ADD_USER:
             return {
                 ...state,
                 newUser: action.data
-            }
-        
+            };
+
         case RESET_STORE:
             return {
                 ...state,
@@ -54,10 +61,10 @@ const LoginReducer = (state = initialState, action) => {
                 authenticated: false,
                 token: "",
                 user: null
-            }
+            };
         default:
             return state;
     }
-}
+};
 
-export default LoginReducer
+export default LoginReducer;
